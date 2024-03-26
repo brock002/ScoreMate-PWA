@@ -39,7 +39,6 @@ function App() {
                 : createTheme(darkTheme),
         [colorMode]
     )
-    console.log("theme", theme)
 
     return (
         <SnackbarProvider maxSnack={3} autoHideDuration={3000} preventDuplicate>
