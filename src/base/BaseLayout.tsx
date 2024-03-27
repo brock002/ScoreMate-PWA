@@ -47,7 +47,7 @@ const BaseLayout = () => {
                 >
                     <Typography
                         variant="h1"
-                        sx={{ fontSize: 30, ml: 1.5 }}
+                        sx={{ fontSize: { xs: 24, sm: 30 }, ml: 1.5 }}
                         color="text.primary"
                     >
                         CardScore Tracker

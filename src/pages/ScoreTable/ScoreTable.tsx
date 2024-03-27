@@ -13,10 +13,11 @@ import {
     Grid,
     Typography,
     Chip,
+    IconButton,
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
-import DeleteIcon from "@mui/icons-material/Delete"
-import SaveIcon from "@mui/icons-material/Save"
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"
+import CancelIcon from "@mui/icons-material/Cancel"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { Player, Scores } from "./ScoreTable.types"
 import { ConfirmationDialog, ResultsDialog } from "@/components"
@@ -220,7 +221,9 @@ const ScoreTable = () => {
                     container
                     justifyContent="space-between"
                     px={1}
+                    rowGap={{ xs: 2, sm: 0 }}
                     sx={{ height: "fit-content" }}
+                    direction={{ xs: "column-reverse", sm: "row" }}
                 >
                     <Grid container item xs={6} direction="column">
                         <Typography variant="h5" color="text.primary">
@@ -270,7 +273,7 @@ const ScoreTable = () => {
                         item
                         xs={6}
                         gap={1}
-                        justifyContent="flex-end"
+                        justifyContent={{ xs: "center", sm: "flex-end" }}
                     >
                         <Button
                             variant="contained"
@@ -299,7 +302,7 @@ const ScoreTable = () => {
                     <Table aria-label="scores-table">
                         <TableHead>
                             <TableRow>
-                                <TableCell></TableCell>
+                                <TableCell>Round</TableCell>
                                 {Object.keys(players).map((item, index) => (
                                     <TableCell
                                         align="center"
@@ -317,7 +320,7 @@ const ScoreTable = () => {
                                     key={`score-table-rows-items-${index}`}
                                 >
                                     <TableCell component="th" scope="row">
-                                        # Round {index + 1}
+                                        # {index + 1}
                                     </TableCell>
                                     {Object.keys(row).map((item, itemIndex) => (
                                         <TableCell
@@ -331,7 +334,10 @@ const ScoreTable = () => {
                                                     name={item}
                                                     value={row[item]}
                                                     onChange={handleChange}
-                                                    sx={{ maxWidth: 100 }}
+                                                    sx={{
+                                                        maxWidth: 100,
+                                                        minWidth: 75,
+                                                    }}
                                                 />
                                             ) : (
                                                 row[item]
@@ -340,25 +346,21 @@ const ScoreTable = () => {
                                     ))}
                                     <TableCell>
                                         {currentRound === index ? (
-                                            <Button
-                                                variant="contained"
+                                            <IconButton
                                                 color="success"
-                                                size="small"
+                                                title="Save"
                                                 onClick={handleSave}
-                                                startIcon={<SaveIcon />}
                                             >
-                                                Save
-                                            </Button>
+                                                <CheckCircleIcon />
+                                            </IconButton>
                                         ) : (
-                                            <Button
-                                                variant="contained"
-                                                size="small"
+                                            <IconButton
                                                 color="error"
                                                 onClick={handleDelete(index)}
-                                                startIcon={<DeleteIcon />}
+                                                title="Delete"
                                             >
-                                                Delete
-                                            </Button>
+                                                <CancelIcon />
+                                            </IconButton>
                                         )}
                                     </TableCell>
                                 </TableRow>
