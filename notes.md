@@ -4,7 +4,6 @@
 -   try different fonts
 -   find tooltips for mobile UI
 -   improve light theme card color
--   improve score table by making first and last columns fixed
 -   improve first time load
 -   Data Export and Sharing: Export game data or share score summaries with fellow players via email or messaging apps. This feature facilitates post-game analysis and allows players to revisit memorable moments from their gaming sessions.
 -   Sync Across Devices: Synchronize game progress and scores across multiple devices, enabling seamless transitions between smartphones, tablets, and other compatible gadgets.
