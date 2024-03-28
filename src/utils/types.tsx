@@ -1,5 +1,6 @@
 export type FormValues = {
     players: string[]
+    title: string
     maxScore: number | string
     maxScorePerRound: number | string
     maxRounds: number | string

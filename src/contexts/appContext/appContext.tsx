@@ -15,6 +15,7 @@ import {
 // players: ["JD", "SM", "SA", "BD"],
 const INITIAL_FORM_VALUES = {
     players: [],
+    title: "",
     maxScore: "",
     maxScorePerRound: "",
     maxRounds: "",
@@ -63,6 +64,7 @@ const AppContextProvider: React.FC<{
             case DispatchActions.updateValue:
                 const { name, value } = action.payload || {}
                 if (
+                    name === "title" ||
                     name === "players" ||
                     name === "maxScore" ||
                     name === "maxRounds" ||
