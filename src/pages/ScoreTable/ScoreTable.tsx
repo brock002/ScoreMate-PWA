@@ -20,7 +20,11 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import CancelIcon from "@mui/icons-material/Cancel"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { Player, Scores } from "./ScoreTable.types"
-import { ConfirmationDialog, ResultsDialog } from "@/components"
+import {
+    ConfirmationDialog,
+    ResultsDialog,
+    StickyTableCell,
+} from "@/components"
 import { useNavigate } from "react-router-dom"
 import { useFormData } from "@/contexts"
 import { useSnackbar } from "notistack"
@@ -223,11 +227,10 @@ const ScoreTable = () => {
                     px={1}
                     rowGap={{ xs: 2, sm: 0 }}
                     sx={{ height: "fit-content" }}
-                    direction={{ xs: "column-reverse", sm: "row" }}
                 >
-                    <Grid container item xs={6} direction="column">
+                    <Grid container item xs={12} sm={6} direction="column">
                         <Typography variant="h5" color="text.primary">
-                            Game
+                            {data.title}
                         </Typography>
                         <Typography variant="body1" color="text.secondary">
                             Started{" "}
@@ -271,7 +274,8 @@ const ScoreTable = () => {
                     <Grid
                         container
                         item
-                        xs={6}
+                        xs={12}
+                        sm={6}
                         gap={1}
                         justifyContent={{ xs: "center", sm: "flex-end" }}
                     >
@@ -297,12 +301,12 @@ const ScoreTable = () => {
                 <TableContainer
                     component={Paper}
                     elevation={2}
-                    sx={{ mt: 1.5 }}
+                    sx={{ mt: 1.5, height: "fit-content" }}
                 >
                     <Table aria-label="scores-table">
                         <TableHead>
                             <TableRow>
-                                <TableCell>Round</TableCell>
+                                <StickyTableCell sx={{ left: 0 }} />
                                 {Object.keys(players).map((item, index) => (
                                     <TableCell
                                         align="center"
@@ -311,7 +315,7 @@ const ScoreTable = () => {
                                         {players[item]}
                                     </TableCell>
                                 ))}
-                                <TableCell></TableCell>
+                                <TableCell />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -319,9 +323,12 @@ const ScoreTable = () => {
                                 <TableRow
                                     key={`score-table-rows-items-${index}`}
                                 >
-                                    <TableCell component="th" scope="row">
+                                    <StickyTableCell
+                                        scope="row"
+                                        sx={{ left: 0 }}
+                                    >
                                         # {index + 1}
-                                    </TableCell>
+                                    </StickyTableCell>
                                     {Object.keys(row).map((item, itemIndex) => (
                                         <TableCell
                                             align="center"
@@ -374,7 +381,9 @@ const ScoreTable = () => {
                             }}
                         >
                             <TableRow>
-                                <TableCell>Total</TableCell>
+                                <StickyTableCell sx={{ left: 0 }}>
+                                    Total
+                                </StickyTableCell>
                                 {Object.keys(players).map((item, index) => (
                                     <TableCell
                                         align="center"
