@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom"
 import {
     Button,
     Chip,
+    Divider,
     FormControlLabel,
     Grid,
     InputAdornment,
     Switch,
     TextField,
-    Typography,
 } from "@mui/material"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { useFormData } from "@/contexts"
@@ -45,6 +45,14 @@ const GameForm: React.FC = () => {
                 payload: {
                     name: e.target.name,
                     value: e.target.checked,
+                },
+            })
+        } else if (e.target.name === "title") {
+            dispatch({
+                type: DispatchActions.updateValue,
+                payload: {
+                    name: e.target.name,
+                    value: e.target.value,
                 },
             })
         }
@@ -97,9 +105,9 @@ const GameForm: React.FC = () => {
                 },
             }}
         >
-            <Typography variant="h6" color="text.primary">
-                Start your game by adding at least 2 players.
-            </Typography>
+            <Grid item xs={12} mt={0.5}>
+                <Divider sx={{ color: "text.primary" }}>Players</Divider>
+            </Grid>
 
             {/* players */}
             <Grid item xs={12}>
@@ -108,6 +116,7 @@ const GameForm: React.FC = () => {
                     variant="outlined"
                     name="new-player-name"
                     placeholder="player name"
+                    helperText="add at least 2 players to start the game..."
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
                     onKeyDown={(e) => {
@@ -132,6 +141,7 @@ const GameForm: React.FC = () => {
                 />
             </Grid>
 
+            {/* added players */}
             {data.players.length > 0 ? (
                 <Grid item xs={12} color="text.primary">
                     Players added:{" "}
@@ -146,6 +156,23 @@ const GameForm: React.FC = () => {
                     ))}
                 </Grid>
             ) : null}
+
+            <Grid item xs={12} mt={3}>
+                <Divider sx={{ color: "text.primary" }}>Game Settings</Divider>
+            </Grid>
+
+            {/* Game title */}
+            <Grid item xs={12}>
+                <TextField
+                    label="Title"
+                    variant="outlined"
+                    name="title"
+                    value={data.title}
+                    onChange={handleChange}
+                    size="small"
+                    fullWidth
+                />
+            </Grid>
 
             {/* Maximum score */}
             <Grid item xs={12}>
