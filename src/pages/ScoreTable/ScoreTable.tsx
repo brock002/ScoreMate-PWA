@@ -21,6 +21,10 @@ import CancelIcon from "@mui/icons-material/Cancel"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { Player, Scores } from "./ScoreTable.types"
 import {
+    CONFIRMATION_DIALOG_INITIAL_PROPS,
+    CONFIRMATION_DIALOG_PROPS,
+} from "./ScoreTable.constants"
+import {
     ConfirmationDialog,
     ResultsDialog,
     StickyTableCell,
@@ -63,6 +67,9 @@ const ScoreTable = () => {
     const [isGameComplete, setIsGameComplete] = useState<boolean>(false)
     const [showConfirmationDialog, setShowConfirmationDialog] =
         useState<boolean>(false)
+    const [confirmationDialogProps, setConfirmationDialogProps] = useState(
+        CONFIRMATION_DIALOG_INITIAL_PROPS
+    )
     const totalScores = useMemo(
         () =>
             Object.fromEntries(
@@ -148,14 +155,19 @@ const ScoreTable = () => {
     }
 
     const handleSave = (): void => {
+        // calculate current round total
+        const currentRoundTotal = Object.values(scores[currentRound]).reduce(
+            (total, item) => (!!item ? Number(total) + Number(item) : total),
+            0
+        )
+
+        // check if round is empty
+        if (!currentRoundTotal) return
+
         // total validation
         if (
             !!data.maxScorePerRound &&
-            Object.values(scores[currentRound]).reduce(
-                (total, item) =>
-                    !!item ? Number(total) + Number(item) : total,
-                0
-            ) !== data.maxScorePerRound
+            currentRoundTotal !== data.maxScorePerRound
         ) {
             enqueueSnackbar(
                 `Current round total is not equal to ${data.maxScorePerRound}`,
@@ -187,20 +199,50 @@ const ScoreTable = () => {
         setCurrentRound((prev) => prev + 1)
     }
 
-    const handleDelete = (roundIndex: number) => (): void => {
+    const handleDeleteConfirm = (roundIndex: number) => (): void => {
         setScores((prev) => {
             const newScores = prev.filter((_, index) => index !== roundIndex)
             updateScoresToContext(newScores)
             return newScores
         })
         setCurrentRound((prev) => prev - 1)
+        handleConfirmationModalClose()
+    }
+
+    const handleDelete = (roundIndex: number) => (): void => {
+        setConfirmationDialogProps({
+            ...CONFIRMATION_DIALOG_PROPS["confirmDeleteRound"],
+            handleConfirm: handleDeleteConfirm(roundIndex),
+        })
+        setShowConfirmationDialog(true)
     }
 
     const handleResultsModalClose = () => setIsGameComplete(false)
 
-    const handleResetGameClick = () => setShowConfirmationDialog(true)
-
     const handleConfirmationModalClose = () => setShowConfirmationDialog(false)
+
+    const handleResetGameConfirm = () => {
+        setScores(() => {
+            const initialScores = [
+                Object.fromEntries(
+                    data.players.map((_, index) => [`player${index}`, ""])
+                ),
+            ]
+            updateScoresToContext(initialScores)
+            return initialScores
+        })
+        setCurrentRound(0)
+        handleResultsModalClose()
+        handleConfirmationModalClose()
+    }
+
+    const handleResetGameClick = () => {
+        setConfirmationDialogProps({
+            ...CONFIRMATION_DIALOG_PROPS["confirmReset"],
+            handleConfirm: handleResetGameConfirm,
+        })
+        setShowConfirmationDialog(true)
+    }
 
     const handleFinishGameClick = () => setIsGameComplete(true)
 
@@ -208,14 +250,6 @@ const ScoreTable = () => {
         setIsGameComplete(false)
         dispatch({ type: DispatchActions.finishGame })
         navigate("/", { replace: true })
-    }
-
-    const handleResetGameConfirm = () => {
-        setScores(INITIAL_SCORES)
-        updateScoresToContext(INITIAL_SCORES)
-        setCurrentRound(0)
-        handleConfirmationModalClose()
-        handleResultsModalClose()
     }
 
     return (
@@ -230,7 +264,7 @@ const ScoreTable = () => {
                 >
                     <Grid container item xs={12} sm={6} direction="column">
                         <Typography variant="h5" color="text.primary">
-                            {data.title}
+                            {data.title || "Game"}
                         </Typography>
                         <Typography variant="body1" color="text.secondary">
                             Started{" "}
@@ -355,7 +389,7 @@ const ScoreTable = () => {
                                         {currentRound === index ? (
                                             <IconButton
                                                 color="success"
-                                                title="Save"
+                                                title="Save Round"
                                                 onClick={handleSave}
                                             >
                                                 <CheckCircleIcon />
@@ -363,8 +397,8 @@ const ScoreTable = () => {
                                         ) : (
                                             <IconButton
                                                 color="error"
+                                                title="Delete Round"
                                                 onClick={handleDelete(index)}
-                                                title="Delete"
                                             >
                                                 <CancelIcon />
                                             </IconButton>
@@ -407,8 +441,8 @@ const ScoreTable = () => {
             />
             <ConfirmationDialog
                 open={showConfirmationDialog}
-                title="Confirm Reset"
-                content="If you confirm the scores will reset. Are you sure you want to reset the game.?"
+                title={confirmationDialogProps.title}
+                content={confirmationDialogProps.content}
                 actions={[
                     {
                         label: "Cancel",
@@ -416,7 +450,7 @@ const ScoreTable = () => {
                     },
                     {
                         label: "Confirm",
-                        handleClick: handleResetGameConfirm,
+                        handleClick: confirmationDialogProps.handleConfirm,
                     },
                 ]}
             />

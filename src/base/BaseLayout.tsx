@@ -1,11 +1,15 @@
 import { Outlet } from "react-router-dom"
-import { Grid, IconButton, Typography } from "@mui/material"
+import { Grid, IconButton, Typography, useMediaQuery } from "@mui/material"
 import Brightness4Icon from "@mui/icons-material/Brightness4"
 import Brightness7Icon from "@mui/icons-material/Brightness7"
+import { useTheme } from "@mui/material/styles"
+import Logo from "@/assets/logo-icon.png"
 import { useColorModes } from "@/contexts"
 
 const BaseLayout = () => {
     const { colorMode, toggleColorMode } = useColorModes()
+    const theme = useTheme()
+    const isUpSM = useMediaQuery(theme.breakpoints.up("sm"))
 
     return (
         <Grid
@@ -45,17 +49,35 @@ const BaseLayout = () => {
                         mx: -2,
                     })}
                 >
-                    <Typography
-                        variant="h1"
-                        sx={{ fontSize: { xs: 24, sm: 30 }, ml: 1.5 }}
-                        color="text.primary"
+                    <Grid
+                        item
+                        container
+                        alignItems="center"
+                        xs={8}
+                        sm={6}
+                        ml={{ xs: 0.25, sm: 1.5 }}
                     >
-                        CardScore Tracker
-                    </Typography>
+                        <img
+                            src={Logo}
+                            alt="LOGO"
+                            height={isUpSM ? 36 : 24}
+                            width={isUpSM ? 36 : 24}
+                        />
+                        <Typography
+                            variant="h1"
+                            sx={{ fontSize: { xs: 24, sm: 30 }, ml: 1 }}
+                            color="text.primary"
+                        >
+                            Score Mate
+                        </Typography>
+                    </Grid>
                     <IconButton
                         sx={{ m: 1 }}
                         onClick={toggleColorMode}
                         color="inherit"
+                        title={
+                            colorMode === "light" ? "dark mode" : "light mode"
+                        }
                     >
                         {colorMode === "light" ? (
                             <Brightness4Icon />
