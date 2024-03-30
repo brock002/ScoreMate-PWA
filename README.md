@@ -1,6 +1,6 @@
-# CardScore Tracker
+# Score Mate
 
-CardScore Tracker is a comprehensive app designed for enthusiasts of card games who want to effortlessly keep track of scores during multiple rounds. Whether you're playing games like Poker, Bridge, Rummy, or any other card game, this app simplifies scorekeeping and enhances your gaming experience.
+Score Mate is a comprehensive app designed for enthusiasts of card games who want to effortlessly keep track of scores during multiple rounds. Whether you're playing games like Poker, Bridge, Rummy, or any other card game, this app simplifies scorekeeping and enhances your gaming experience.
 
 ### Key Features:
 
@@ -12,10 +12,10 @@ CardScore Tracker is a comprehensive app designed for enthusiasts of card games 
 
 4. Real-time Score Calculation: Witness score updates in real-time as you input data, ensuring accurate and up-to-date scorekeeping throughout the game. Say goodbye to manual calculations and errors.
 
-5. Ad-Free Experience: Focus solely on your card game without interruptions from advertisements. CardScore Tracker offers an ad-free experience, ensuring a distraction-free environment for players.
+5. Ad-Free Experience: Focus solely on your card game without interruptions from advertisements. Score Mate offers an ad-free experience, ensuring a distraction-free environment for players.
 
 ---
 
-Whether you're hosting a casual game night with friends or competing in a high-stakes tournament, CardScore Tracker is your ultimate companion for keeping score accurately and efficiently. Download the app today and elevate your card gaming experience to new heights!
+Whether you're hosting a casual game night with friends or competing in a high-stakes tournament, Score Mate is your ultimate companion for keeping score accurately and efficiently. Download the app today and elevate your card gaming experience to new heights!
 
 ---
