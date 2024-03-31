@@ -1,20 +1,24 @@
 import { Outlet } from "react-router-dom"
-import { Grid, IconButton, Typography, useMediaQuery } from "@mui/material"
+import { Analytics } from "@vercel/analytics/react"
+import {
+    Container,
+    Divider,
+    Grid,
+    IconButton,
+    Link,
+    Typography,
+} from "@mui/material"
 import Brightness4Icon from "@mui/icons-material/Brightness4"
 import Brightness7Icon from "@mui/icons-material/Brightness7"
-import { useTheme } from "@mui/material/styles"
-import Logo from "@/assets/logo-icon.png"
 import { useColorModes } from "@/contexts"
+import { Logo } from "@/components"
 
 const BaseLayout = () => {
     const { colorMode, toggleColorMode } = useColorModes()
-    const theme = useTheme()
-    const isUpSM = useMediaQuery(theme.breakpoints.up("sm"))
 
     return (
         <Grid
             container
-            component="main"
             sx={{
                 backgroundColor: "background.default",
                 padding: "0.5rem 0",
@@ -35,6 +39,7 @@ const BaseLayout = () => {
                     p: 1,
                 }}
             >
+                {/* header */}
                 <Grid
                     container
                     justifyContent="space-between"
@@ -46,30 +51,10 @@ const BaseLayout = () => {
                         padding: "0.5rem",
                         borderRadius: 1,
                         mb: 4,
-                        mx: -2,
                     })}
                 >
-                    <Grid
-                        item
-                        container
-                        alignItems="center"
-                        xs={8}
-                        sm={6}
-                        ml={{ xs: 0.25, sm: 1.5 }}
-                    >
-                        <img
-                            src={Logo}
-                            alt="LOGO"
-                            height={isUpSM ? 36 : 24}
-                            width={isUpSM ? 36 : 24}
-                        />
-                        <Typography
-                            variant="h1"
-                            sx={{ fontSize: { xs: 24, sm: 30 }, ml: 1 }}
-                            color="text.primary"
-                        >
-                            Score Mate
-                        </Typography>
+                    <Grid item xs={8} sm={6} ml={{ xs: 0.25, sm: 1.5 }}>
+                        <Logo />
                     </Grid>
                     <IconButton
                         sx={{ m: 1 }}
@@ -90,7 +75,83 @@ const BaseLayout = () => {
                         )}
                     </IconButton>
                 </Grid>
-                <Outlet />
+
+                {/* children components */}
+                <Container component="main" maxWidth={false} sx={{ px: 0 }}>
+                    <Outlet />
+                </Container>
+
+                {/* analytics */}
+                <Analytics />
+
+                {/* footer */}
+                <Grid
+                    container
+                    component="footer"
+                    justifyContent="center"
+                    direction="column"
+                    rowGap={2}
+                    mt={8}
+                    sx={{
+                        "& p": { textIndent: "2rem" },
+                        "& :last-child": { textIndent: 0 },
+                    }}
+                >
+                    <Divider sx={{ color: "text.primary" }} />
+
+                    <Logo gridProps={{ justifyContent: "center" }} />
+
+                    <Typography color="text.primary" textAlign="justify">
+                        Score Mate is a comprehensive app designed for
+                        enthusiasts of card games who want to effortlessly keep
+                        track of scores during multiple rounds. Whether you're
+                        playing games like Poker, Bridge, Rummy, or any other
+                        card game, this app simplifies scorekeeping and enhances
+                        your gaming experience. Developed with a passion for
+                        enhancing gaming experiences, our app offers intuitive
+                        features to streamline score tracking and elevate your
+                        gameplay.
+                    </Typography>
+
+                    <Typography color="text.primary" textAlign="justify">
+                        <strong>Developer Info:</strong> Score Mate is the
+                        passion project of me,{" "}
+                        <Link
+                            href="https://www.linkedin.com/in/biswajit-deka-a5912a177/"
+                            title="LinkedIn profile"
+                            underline="hover"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            Biswajit Deka
+                        </Link>
+                        , a solo developer driven by a love for card games and a
+                        desire to enhance the gaming experience for fellow
+                        enthusiasts.
+                    </Typography>
+
+                    <Typography color="text.primary" textAlign="justify">
+                        Your feedback is invaluable in enhancing this app. Share
+                        your thoughts by clicking{" "}
+                        <Link
+                            href="https://docs.google.com/forms/d/e/1FAIpQLSd4OQwC3TqbkbMBlkwc5OflmbiYqeg5Nq9olmdmJIjx3kOMMA/viewform?usp=sf_link"
+                            title="feedback form"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            here
+                        </Link>{" "}
+                        or reach out to me via email at{" "}
+                        <Link href="mailTo:bdekabusiness@gmail.com">
+                            bdekabusiness@gmail.com
+                        </Link>
+                        . Thank you for helping us improve
+                    </Typography>
+
+                    <Typography color="text.primary" align="center">
+                        Thank you for choosing Score Mate! Happy gaming!
+                    </Typography>
+                </Grid>
             </Grid>
         </Grid>
     )
