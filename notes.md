@@ -1,8 +1,5 @@
 ## TODO:
 
--   add about, feedback pages
--   try different fonts
--   find tooltips for mobile UI
 -   Data Export and Sharing: Export game data or share score summaries with fellow players via email or messaging apps. This feature facilitates post-game analysis and allows players to revisit memorable moments from their gaming sessions.
 -   Sync Across Devices: Synchronize game progress and scores across multiple devices, enabling seamless transitions between smartphones, tablets, and other compatible gadgets.
 -   Multi-Game Support: Seamlessly switch between different card games within the app. Whether you're playing one game for an entire session or switching between multiple games, Score Mate adapts to your needs.
