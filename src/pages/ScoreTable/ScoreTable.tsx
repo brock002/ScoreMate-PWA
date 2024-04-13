@@ -374,7 +374,7 @@ const ScoreTable = () => {
                         mt: 1.5,
                         height: "fit-content",
                         maxHeight: "60vh",
-                        "&.MuiTableContainer-root .MuiTableRow-root .MuiTableCell-root:first-child":
+                        "&.MuiTableContainer-root .MuiTableRow-root .MuiTableCell-root:first-of-type":
                             {
                                 width: "3.75rem",
                             },
@@ -471,16 +471,13 @@ const ScoreTable = () => {
                             ))}
                         </TableBody>
                         <TableFooter
-                            sx={
-                                !showFooterCollapse
-                                    ? {
-                                          "&.MuiTableFooter-root .MuiTableRow-root:first-child .MuiTableCell-root":
-                                              {
-                                                  borderBottom: "none",
-                                              },
-                                      }
-                                    : {}
-                            }
+                            sx={{
+                                [`&.MuiTableFooter-root .MuiTableRow-root:${
+                                    showFooterCollapse ? "last" : "first"
+                                }-of-type .MuiTableCell-root`]: {
+                                    borderBottom: "none",
+                                },
+                            }}
                         >
                             {/* score total row */}
                             <TableRow>
