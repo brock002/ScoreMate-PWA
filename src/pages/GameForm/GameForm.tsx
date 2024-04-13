@@ -182,6 +182,7 @@ const GameForm: React.FC = () => {
                     name="maxScore"
                     helperText="maximum score needed by a player to end the game..."
                     value={data.maxScore}
+                    type="number"
                     onChange={handleChange}
                     size="small"
                     fullWidth
@@ -196,6 +197,7 @@ const GameForm: React.FC = () => {
                     name="maxScorePerRound"
                     helperText="combined score of all the players in a round..."
                     value={data.maxScorePerRound}
+                    type="number"
                     onChange={handleChange}
                     size="small"
                     fullWidth
@@ -211,6 +213,7 @@ const GameForm: React.FC = () => {
                     helperText="maximum no of rounds the game will go on for..."
                     value={data.maxRounds}
                     onChange={handleChange}
+                    type="number"
                     size="small"
                     fullWidth
                 />

@@ -18,6 +18,7 @@ import {
 import { styled } from "@mui/material/styles"
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import CancelIcon from "@mui/icons-material/Cancel"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { Player, Scores } from "./ScoreTable.types"
 import {
@@ -44,7 +45,7 @@ const INITIAL_SCORES = [
 ]
 const InfoText = styled(Chip)(({ theme }) => ({
     backgroundColor: theme.palette.primary.dark,
-    borderRadius: 4,
+    borderRadius: 16,
     color: "white",
     height: "1.75rem",
     "& span": {
@@ -70,6 +71,7 @@ const ScoreTable = () => {
     const [confirmationDialogProps, setConfirmationDialogProps] = useState(
         CONFIRMATION_DIALOG_INITIAL_PROPS
     )
+    const [showFooterCollapse, setShowFooterCollapse] = useState<boolean>(false)
     const totalScores = useMemo(
         () =>
             Object.fromEntries(
@@ -258,60 +260,88 @@ const ScoreTable = () => {
                 <Grid
                     container
                     justifyContent="space-between"
-                    px={1}
-                    rowGap={{ xs: 2, sm: 0 }}
+                    rowGap={2}
                     sx={{ height: "fit-content" }}
                 >
-                    <Grid container item xs={12} sm={6} direction="column">
-                        <Typography variant="h5" color="text.primary">
-                            {data.title || "Game"}
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                            Started{" "}
-                            {moment(currentGameData?.startTime).fromNow()}
-                        </Typography>
-                        {data.maxScore && (
-                            <Typography
-                                variant="subtitle1"
-                                color="text.primary"
-                            >
-                                Max. Score: <InfoText label={data.maxScore} />
+                    <Grid container>
+                        <Grid container>
+                            <Typography variant="h5" color="text.primary">
+                                {data.title || "Game"}
                             </Typography>
-                        )}
-                        {data.maxScorePerRound && (
-                            <Typography
-                                variant="subtitle1"
-                                color="text.primary"
+                        </Grid>
+                        <Grid container>
+                            <Typography variant="body1" color="text.secondary">
+                                Started{" "}
+                                {moment(currentGameData?.startTime).fromNow()}
+                            </Typography>
+                        </Grid>
+                        {data.maxScore ? (
+                            <Grid
+                                container
+                                justifyContent="space-between"
+                                pt={0.5}
                             >
-                                Max. Score per Round:{" "}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="text.primary"
+                                >
+                                    Max. Score
+                                </Typography>
+                                <InfoText label={data.maxScore} />
+                            </Grid>
+                        ) : null}
+                        {data.maxScorePerRound ? (
+                            <Grid
+                                container
+                                justifyContent="space-between"
+                                pt={0.5}
+                            >
+                                <Typography
+                                    variant="subtitle1"
+                                    color="text.primary"
+                                >
+                                    Max. Score per Round
+                                </Typography>
                                 <InfoText label={data.maxScorePerRound} />
-                            </Typography>
-                        )}
-                        {data.maxRounds && (
-                            <Typography
-                                variant="subtitle1"
-                                color="text.primary"
+                            </Grid>
+                        ) : null}
+                        {data.maxRounds ? (
+                            <Grid
+                                container
+                                justifyContent="space-between"
+                                pt={0.5}
                             >
-                                Max. Number of Rounds:{" "}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="text.primary"
+                                >
+                                    Max. Number of Rounds
+                                </Typography>
                                 <InfoText label={data.maxRounds} />
-                            </Typography>
-                        )}
-                        {data.reversedScoring && (
-                            <Typography
-                                variant="subtitle1"
-                                color="text.primary"
+                            </Grid>
+                        ) : null}
+                        {data.reversedScoring ? (
+                            <Grid
+                                container
+                                justifyContent="space-between"
+                                pt={0.5}
                             >
-                                Reversed Scoring: <InfoText label="True" />
-                            </Typography>
-                        )}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="text.primary"
+                                >
+                                    Reversed Scoring
+                                </Typography>
+                                <InfoText label="True" />
+                            </Grid>
+                        ) : null}
                     </Grid>
                     <Grid
                         container
                         item
                         xs={12}
-                        sm={6}
                         gap={1}
-                        justifyContent={{ xs: "center", sm: "flex-end" }}
+                        justifyContent={{ xs: "flex-end" }}
                     >
                         <Button
                             variant="contained"
@@ -335,21 +365,48 @@ const ScoreTable = () => {
                 <TableContainer
                     component={Paper}
                     elevation={2}
-                    sx={{ mt: 1.5, height: "fit-content" }}
+                    sx={{
+                        mt: 1.5,
+                        height: "fit-content",
+                        maxHeight: "60vh",
+                        "&.MuiTableContainer-root .MuiTableRow-root .MuiTableCell-root:first-child":
+                            {
+                                width: "3.75rem",
+                            },
+                    }}
                 >
-                    <Table aria-label="scores-table">
+                    <Table stickyHeader aria-label="scores-table">
                         <TableHead>
                             <TableRow>
-                                <StickyTableCell sx={{ left: 0 }} />
+                                <TableCell
+                                    sx={{
+                                        left: 0,
+                                        zIndex: 15,
+                                        backgroundColor: "background.paper",
+                                        filter: "brightness(70%)",
+                                    }}
+                                />
                                 {Object.keys(players).map((item, index) => (
                                     <TableCell
                                         align="center"
                                         key={`players-items-${index}`}
+                                        sx={{
+                                            zIndex: 5,
+                                            backgroundColor: "background.paper",
+                                            filter: "brightness(95%)",
+                                        }}
                                     >
                                         {players[item]}
                                     </TableCell>
                                 ))}
-                                <TableCell />
+                                <TableCell
+                                    sx={{
+                                        right: 0,
+                                        zIndex: 15,
+                                        backgroundColor: "background.paper",
+                                        filter: "brightness(70%)",
+                                    }}
+                                />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -357,10 +414,7 @@ const ScoreTable = () => {
                                 <TableRow
                                     key={`score-table-rows-items-${index}`}
                                 >
-                                    <StickyTableCell
-                                        scope="row"
-                                        sx={{ left: 0 }}
-                                    >
+                                    <StickyTableCell sx={{ left: 0 }}>
                                         # {index + 1}
                                     </StickyTableCell>
                                     {Object.keys(row).map((item, itemIndex) => (
@@ -374,6 +428,7 @@ const ScoreTable = () => {
                                                     size="small"
                                                     name={item}
                                                     value={row[item]}
+                                                    type="number"
                                                     onChange={handleChange}
                                                     sx={{
                                                         maxWidth: 100,
@@ -385,7 +440,7 @@ const ScoreTable = () => {
                                             )}
                                         </TableCell>
                                     ))}
-                                    <TableCell>
+                                    <StickyTableCell sx={{ right: 0 }}>
                                         {currentRound === index ? (
                                             <IconButton
                                                 color="success"
@@ -403,16 +458,21 @@ const ScoreTable = () => {
                                                 <CancelIcon />
                                             </IconButton>
                                         )}
-                                    </TableCell>
+                                    </StickyTableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                         <TableFooter
-                            sx={{
-                                "&.MuiTableFooter-root .MuiTableCell-root": {
-                                    borderBottom: "none",
-                                },
-                            }}
+                            sx={
+                                !showFooterCollapse
+                                    ? {
+                                          "&.MuiTableFooter-root .MuiTableRow-root:first-child .MuiTableCell-root":
+                                              {
+                                                  borderBottom: "none",
+                                              },
+                                      }
+                                    : {}
+                            }
                         >
                             <TableRow>
                                 <StickyTableCell sx={{ left: 0 }}>
@@ -426,8 +486,44 @@ const ScoreTable = () => {
                                         {totalScores[item]}
                                     </TableCell>
                                 ))}
-                                <TableCell></TableCell>
+                                <StickyTableCell sx={{ right: 0 }}>
+                                    {Number(data.maxScore) > 0 ? (
+                                        <IconButton
+                                            aria-label="expand-footer"
+                                            size="small"
+                                            onClick={() =>
+                                                setShowFooterCollapse(
+                                                    (prev) => !prev
+                                                )
+                                            }
+                                        >
+                                            <ExpandMoreIcon
+                                                sx={{
+                                                    transform:
+                                                        showFooterCollapse
+                                                            ? "rotate(180deg)"
+                                                            : "rotate(0deg)",
+                                                }}
+                                            />
+                                        </IconButton>
+                                    ) : null}
+                                </StickyTableCell>
                             </TableRow>
+                            {showFooterCollapse ? (
+                                <TableRow>
+                                    <StickyTableCell sx={{ left: 0 }} />
+                                    {Object.keys(players).map((item, index) => (
+                                        <TableCell
+                                            align="center"
+                                            key={`players-total-scores-need-to-win-items-${index}`}
+                                        >
+                                            {Number(data.maxScore) -
+                                                totalScores[item]}
+                                        </TableCell>
+                                    ))}
+                                    <StickyTableCell sx={{ right: 0 }} />
+                                </TableRow>
+                            ) : null}
                         </TableFooter>
                     </Table>
                 </TableContainer>
