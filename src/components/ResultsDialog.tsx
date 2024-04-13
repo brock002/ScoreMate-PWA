@@ -101,7 +101,7 @@ const ResultsDialog: React.FC<ResultsDialogProps> = ({
                 <Confetti
                     height={dialogSize.height}
                     width={dialogSize.width}
-                    gravity={0.05}
+                    gravity={0.02}
                     confettiSource={{
                         x: dialogSize.width / 2,
                         y: dialogSize.height - 50,
