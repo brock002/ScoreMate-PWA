@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import {
     Button,
-    Chip,
     Divider,
     FormControlLabel,
     Grid,
-    InputAdornment,
+    MenuItem,
     Switch,
     TextField,
 } from "@mui/material"
@@ -16,14 +15,28 @@ import { useSnackbar } from "notistack"
 
 const GameForm: React.FC = () => {
     const navigate = useNavigate()
-    const { data, currentGameData, dispatch } = useFormData()
     const { enqueueSnackbar } = useSnackbar()
-    const [playerName, setPlayerName] = useState<string>("")
+    const { data, currentGameData, dispatch } = useFormData()
+    const [playersCount, setPlayersCount] = useState<number>(2)
+    const [players, setPlayers] = useState<string[]>(["Player 1", "Player 2"])
 
     useEffect(() => {
         if (currentGameData?.isGameRunning)
             navigate("/table", { replace: true })
     }, [currentGameData])
+
+    useEffect(() => {
+        data.players.length > 0 && setPlayersCount(data.players.length)
+    }, [])
+
+    useEffect(() => {
+        setPlayers((prev) =>
+            [...Array(playersCount)].map(
+                (_, index) =>
+                    data.players[index] || prev[index] || `Player ${index + 1}`
+            )
+        )
+    }, [playersCount])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         if (
@@ -58,41 +71,38 @@ const GameForm: React.FC = () => {
         }
     }
 
-    const handleAddClick = () => {
-        if (
-            !!playerName &&
-            data.players.every((player) => player !== playerName)
-        ) {
+    const handlePlayerUpdate =
+        (changeIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch({
                 type: DispatchActions.updateValue,
                 payload: {
                     name: "players",
-                    value: [...data.players, playerName],
+                    value: [],
                 },
             })
-            setPlayerName("")
+            setPlayers((prev) =>
+                prev.map((item, index) =>
+                    index === changeIndex ? e.target.value : item
+                )
+            )
         }
-    }
 
     const handleSubmit = (): void => {
-        if (data.players.length < 2) {
-            enqueueSnackbar("Add a least 2 players to start the game...", {
+        if (players.some((item) => !item)) {
+            enqueueSnackbar("Player names cannot be empty...", {
                 variant: "error",
             })
             return
         }
-        dispatch({ type: DispatchActions.startGame })
-        navigate("/table", { replace: true })
-    }
-
-    const handleDeletePlayer = (playerName: string) => () => {
         dispatch({
             type: DispatchActions.updateValue,
             payload: {
                 name: "players",
-                value: data.players.filter((player) => player !== playerName),
+                value: players,
             },
         })
+        dispatch({ type: DispatchActions.startGame })
+        navigate("/table", { replace: true })
     }
 
     return (
@@ -109,60 +119,75 @@ const GameForm: React.FC = () => {
                 <Divider sx={{ color: "text.primary" }}>Players</Divider>
             </Grid>
 
-            {/* players */}
-            <Grid item xs={12}>
-                <TextField
-                    label="Add Players"
-                    variant="outlined"
-                    name="new-player-name"
-                    placeholder="player name"
-                    helperText="add at least 2 players to start the game..."
-                    value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value)}
-                    onKeyDown={(e) => {
-                        e.key === "Enter" && handleAddClick()
-                    }}
-                    size="small"
-                    fullWidth
-                    sx={{ padding: 0 }}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <Button
-                                    size="small"
-                                    color="secondary"
-                                    onClick={handleAddClick}
+            {/* players count */}
+            <Grid container>
+                <FormControlLabel
+                    control={
+                        <TextField
+                            select
+                            size="small"
+                            value={playersCount}
+                            variant="outlined"
+                            sx={{ minWidth: 150 }}
+                            onChange={(e) =>
+                                setPlayersCount(Number(e.target.value))
+                            }
+                        >
+                            {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((option) => (
+                                <MenuItem
+                                    value={option}
+                                    key={`players-count-options-${option}`}
                                 >
-                                    Add
-                                </Button>
-                            </InputAdornment>
-                        ),
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    }
+                    labelPlacement="start"
+                    label="Players Count"
+                    sx={{
+                        "&.MuiFormControlLabel-root": {
+                            width: "100%",
+                            justifyContent: "space-between",
+                            color: "text.secondary",
+                            marginRight: 0,
+                        },
                     }}
                 />
             </Grid>
 
-            {/* added players */}
-            {data.players.length > 0 ? (
-                <Grid item xs={12} color="text.primary">
-                    Players added:{" "}
-                    {data.players.map((item, index) => (
-                        <Chip
-                            label={item}
-                            color="primary"
-                            key={`player-items-${index}`}
-                            sx={{ mx: 0.5 }}
-                            onDelete={handleDeletePlayer(item)}
-                        />
-                    ))}
+            <Grid container justifyContent="center">
+                <Grid item xs={8}>
+                    <Divider sx={{ color: "text.primary" }}>
+                        Added Players
+                    </Divider>
                 </Grid>
-            ) : null}
+            </Grid>
+
+            {/* added players */}
+            {players.map((item, index) => (
+                <Grid container key={`game-players-items-${index}`}>
+                    <TextField
+                        size="small"
+                        value={item}
+                        variant="outlined"
+                        label={`#${index + 1} Player Name`}
+                        placeholder="Player Name"
+                        onChange={handlePlayerUpdate(index)}
+                        helperText={!item ? "player name cannot be empty" : ""}
+                        InputLabelProps={{ shrink: true }}
+                        error={!item}
+                        fullWidth
+                    />
+                </Grid>
+            ))}
 
             <Grid item xs={12} mt={3}>
                 <Divider sx={{ color: "text.primary" }}>Game Settings</Divider>
             </Grid>
 
             {/* Game title */}
-            <Grid item xs={12}>
+            <Grid container>
                 <TextField
                     label="Title"
                     variant="outlined"
@@ -175,13 +200,14 @@ const GameForm: React.FC = () => {
             </Grid>
 
             {/* Maximum score */}
-            <Grid item xs={12}>
+            <Grid container>
                 <TextField
                     label="Max. Score"
                     variant="outlined"
                     name="maxScore"
                     helperText="maximum score needed by a player to end the game..."
                     value={data.maxScore}
+                    type="number"
                     onChange={handleChange}
                     size="small"
                     fullWidth
@@ -189,13 +215,14 @@ const GameForm: React.FC = () => {
             </Grid>
 
             {/* Maximum score per round */}
-            <Grid item xs={12}>
+            <Grid container>
                 <TextField
                     label="Max. Score per Round"
                     variant="outlined"
                     name="maxScorePerRound"
                     helperText="combined score of all the players in a round..."
                     value={data.maxScorePerRound}
+                    type="number"
                     onChange={handleChange}
                     size="small"
                     fullWidth
@@ -203,7 +230,7 @@ const GameForm: React.FC = () => {
             </Grid>
 
             {/* Maximum rounds */}
-            <Grid item xs={12}>
+            <Grid container>
                 <TextField
                     label="Max. Number of Rounds"
                     variant="outlined"
@@ -211,13 +238,14 @@ const GameForm: React.FC = () => {
                     helperText="maximum no of rounds the game will go on for..."
                     value={data.maxRounds}
                     onChange={handleChange}
+                    type="number"
                     size="small"
                     fullWidth
                 />
             </Grid>
 
             {/* Reversed scoring */}
-            <Grid item xs={12}>
+            <Grid container>
                 <FormControlLabel
                     control={
                         <Switch
@@ -238,7 +266,7 @@ const GameForm: React.FC = () => {
                 />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid container>
                 <Button
                     variant="contained"
                     size="small"
