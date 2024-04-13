@@ -127,8 +127,10 @@ const ScoreTable = () => {
             Object.values(totalScores).some(
                 (item) => item >= Number(data.maxScore)
             )
-        )
+        ) {
             setIsGameComplete(true)
+            setShowFooterCollapse(false)
+        }
     }, [totalScores])
 
     useEffect(() => {
@@ -257,6 +259,7 @@ const ScoreTable = () => {
     return (
         <>
             <>
+                {/* game details section */}
                 <Grid
                     container
                     justifyContent="space-between"
@@ -362,6 +365,8 @@ const ScoreTable = () => {
                         </Button>
                     </Grid>
                 </Grid>
+
+                {/* table */}
                 <TableContainer
                     component={Paper}
                     elevation={2}
@@ -440,7 +445,10 @@ const ScoreTable = () => {
                                             )}
                                         </TableCell>
                                     ))}
-                                    <StickyTableCell sx={{ right: 0 }}>
+                                    <StickyTableCell
+                                        align="center"
+                                        sx={{ right: 0 }}
+                                    >
                                         {currentRound === index ? (
                                             <IconButton
                                                 color="success"
@@ -474,6 +482,7 @@ const ScoreTable = () => {
                                     : {}
                             }
                         >
+                            {/* score total row */}
                             <TableRow>
                                 <StickyTableCell sx={{ left: 0 }}>
                                     Total
@@ -486,7 +495,10 @@ const ScoreTable = () => {
                                         {totalScores[item]}
                                     </TableCell>
                                 ))}
-                                <StickyTableCell sx={{ right: 0 }}>
+                                <StickyTableCell
+                                    align="center"
+                                    sx={{ right: 0 }}
+                                >
                                     {Number(data.maxScore) > 0 ? (
                                         <IconButton
                                             aria-label="expand-footer"
@@ -509,6 +521,8 @@ const ScoreTable = () => {
                                     ) : null}
                                 </StickyTableCell>
                             </TableRow>
+
+                            {/* score remaining total row */}
                             {showFooterCollapse ? (
                                 <TableRow>
                                     <StickyTableCell sx={{ left: 0 }} />
@@ -528,6 +542,8 @@ const ScoreTable = () => {
                     </Table>
                 </TableContainer>
             </>
+
+            {/* results dialog */}
             <ResultsDialog
                 open={isGameComplete}
                 players={players}
@@ -535,6 +551,8 @@ const ScoreTable = () => {
                 handleClose={handleResultsModalClose}
                 handleFinishGame={handleFinishGame}
             />
+
+            {/* confirmation dialog */}
             <ConfirmationDialog
                 open={showConfirmationDialog}
                 title={confirmationDialogProps.title}
