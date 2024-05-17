@@ -5,13 +5,28 @@ import {
     Divider,
     FormControlLabel,
     Grid,
+    IconButton,
+    InputAdornment,
     MenuItem,
     Switch,
     TextField,
 } from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
+import { ClearableFieldName } from "./GameForm.types"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { useFormData } from "@/contexts"
 import { useSnackbar } from "notistack"
+
+// get end adornment with close icon
+const getCloseIconAdornment = (handleClick = () => {}) => ({
+    endAdornment: (
+        <InputAdornment position="start">
+            <IconButton size="small" onClick={handleClick}>
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </InputAdornment>
+    ),
+})
 
 const GameForm: React.FC = () => {
     const navigate = useNavigate()
@@ -71,6 +86,19 @@ const GameForm: React.FC = () => {
         }
     }
 
+    const handleClearClick =
+        (fieldName: ClearableFieldName = "") =>
+        () => {
+            if (!!fieldName)
+                dispatch({
+                    type: DispatchActions.updateValue,
+                    payload: {
+                        name: fieldName,
+                        value: "",
+                    },
+                })
+        }
+
     const handlePlayerUpdate =
         (changeIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch({
@@ -86,6 +114,12 @@ const GameForm: React.FC = () => {
                 )
             )
         }
+
+    const handlePlayerClearClick = (changeIndex: number) => () => {
+        setPlayers((prev) =>
+            prev.map((item, index) => (index === changeIndex ? "" : item))
+        )
+    }
 
     const handleSubmit = (): void => {
         if (players.some((item) => !item)) {
@@ -178,6 +212,15 @@ const GameForm: React.FC = () => {
                         InputLabelProps={{ shrink: true }}
                         error={!item}
                         fullWidth
+                        InputProps={
+                            !!item
+                                ? {
+                                      ...getCloseIconAdornment(
+                                          handlePlayerClearClick(index)
+                                      ),
+                                  }
+                                : {}
+                        }
                     />
                 </Grid>
             ))}
@@ -196,6 +239,15 @@ const GameForm: React.FC = () => {
                     onChange={handleChange}
                     size="small"
                     fullWidth
+                    InputProps={
+                        !!data.title
+                            ? {
+                                  ...getCloseIconAdornment(
+                                      handleClearClick("title")
+                                  ),
+                              }
+                            : {}
+                    }
                 />
             </Grid>
 
@@ -211,6 +263,15 @@ const GameForm: React.FC = () => {
                     onChange={handleChange}
                     size="small"
                     fullWidth
+                    InputProps={
+                        !!data.maxScore
+                            ? {
+                                  ...getCloseIconAdornment(
+                                      handleClearClick("maxScore")
+                                  ),
+                              }
+                            : {}
+                    }
                 />
             </Grid>
 
@@ -226,6 +287,15 @@ const GameForm: React.FC = () => {
                     onChange={handleChange}
                     size="small"
                     fullWidth
+                    InputProps={
+                        !!data.maxScorePerRound
+                            ? {
+                                  ...getCloseIconAdornment(
+                                      handleClearClick("maxScorePerRound")
+                                  ),
+                              }
+                            : {}
+                    }
                 />
             </Grid>
 
@@ -241,6 +311,15 @@ const GameForm: React.FC = () => {
                     type="number"
                     size="small"
                     fullWidth
+                    InputProps={
+                        !!data.maxRounds
+                            ? {
+                                  ...getCloseIconAdornment(
+                                      handleClearClick("maxRounds")
+                                  ),
+                              }
+                            : {}
+                    }
                 />
             </Grid>
 

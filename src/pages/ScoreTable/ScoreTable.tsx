@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState, useRef } from "react"
 import {
-    Button,
     Table,
     TableBody,
     TableCell,
@@ -14,11 +13,13 @@ import {
     Typography,
     Chip,
     IconButton,
+    Menu,
+    MenuItem,
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"
-import CancelIcon from "@mui/icons-material/Cancel"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+// import ShareIcon from "@mui/icons-material/Share"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import VisibilityIcon from "@mui/icons-material/Visibility"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
 import { Player, Scores } from "./ScoreTable.types"
 import {
@@ -28,7 +29,7 @@ import {
 import {
     ConfirmationDialog,
     ResultsDialog,
-    StickyTableCell,
+    TableRowWithChipHeader,
 } from "@/components"
 import { useNavigate } from "react-router-dom"
 import { useFormData } from "@/contexts"
@@ -56,6 +57,9 @@ const InfoText = styled(Chip)(({ theme }) => ({
 const ScoreTable = () => {
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar()
+    let scoreInputRefs: React.MutableRefObject<
+        React.MutableRefObject<HTMLInputElement | null>[]
+    > = useRef([])
     const { data, currentGameData, dispatch } = useFormData()
     const [players, setPlayers] = useState<Player>({
         player0: "Player 1",
@@ -72,6 +76,8 @@ const ScoreTable = () => {
         CONFIRMATION_DIALOG_INITIAL_PROPS
     )
     const [showFooterCollapse, setShowFooterCollapse] = useState<boolean>(false)
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+    const showMenu = Boolean(anchorEl)
     const totalScores = useMemo(
         () =>
             Object.fromEntries(
@@ -90,7 +96,11 @@ const ScoreTable = () => {
     )
 
     useEffect(() => {
-        if (data.players.length > 0)
+        if (Number(data.maxScore) > 0) setShowFooterCollapse(true)
+    }, [data.maxScore])
+
+    useEffect(() => {
+        if (data.players.length > 0) {
             setPlayers(
                 Object.fromEntries(
                     data.players.map((player, index) => [
@@ -99,7 +109,10 @@ const ScoreTable = () => {
                     ])
                 )
             )
-        else navigate("/", { replace: true })
+            scoreInputRefs.current = Object.keys(data.players).map(() =>
+                React.createRef()
+            )
+        } else navigate("/", { replace: true })
     }, [data.players])
 
     useEffect(() => {
@@ -122,21 +135,19 @@ const ScoreTable = () => {
     }, [players, currentGameData])
 
     useEffect(() => {
-        if (
-            Number(data.maxScore) > 0 &&
-            Object.values(totalScores).some(
-                (item) => item >= Number(data.maxScore)
-            )
-        ) {
-            setIsGameComplete(true)
-            setShowFooterCollapse(false)
-        }
-    }, [totalScores])
+        // focus on first column input
+        scoreInputRefs.current[0].current?.focus()
 
-    useEffect(() => {
-        if (Number(data.maxRounds) > 0 && data.maxRounds === currentRound)
+        // check if max rounds are completed or check if max score is achieved
+        if (
+            (Number(data.maxRounds) > 0 && data.maxRounds === currentRound) ||
+            (Number(data.maxScore) > 0 &&
+                Object.values(totalScores).some(
+                    (item) => item >= Number(data.maxScore)
+                ))
+        )
             setIsGameComplete(true)
-    }, [currentRound])
+    }, [totalScores])
 
     const updateScoresToContext = (scores: Scores[]) =>
         dispatch({
@@ -158,7 +169,8 @@ const ScoreTable = () => {
         )
     }
 
-    const handleSave = (): void => {
+    // save current row scores
+    const saveRow = (): void => {
         // calculate current round total
         const currentRoundTotal = Object.values(scores[currentRound]).reduce(
             (total, item) => (!!item ? Number(total) + Number(item) : total),
@@ -203,6 +215,20 @@ const ScoreTable = () => {
         setCurrentRound((prev) => prev + 1)
     }
 
+    const handleInputKeyDown =
+        (colIndex: number) =>
+        (e: React.KeyboardEvent<HTMLInputElement>): void => {
+            if (!["Enter", "Tab"].includes(e.key)) return
+
+            e.preventDefault()
+            const playersCount = Object.keys(players).length
+            if (colIndex + 1 === playersCount) {
+                saveRow()
+            } else {
+                scoreInputRefs.current[colIndex + 1].current?.focus()
+            }
+        }
+
     const handleDeleteConfirm = (roundIndex: number) => (): void => {
         setScores((prev) => {
             const newScores = prev.filter((_, index) => index !== roundIndex)
@@ -245,16 +271,32 @@ const ScoreTable = () => {
             ...CONFIRMATION_DIALOG_PROPS["confirmReset"],
             handleConfirm: handleResetGameConfirm,
         })
+        handleCloseMenu()
         setShowConfirmationDialog(true)
     }
 
-    const handleFinishGameClick = () => setIsGameComplete(true)
+    const handleShowFinalScoresClick = () => setIsGameComplete(true)
 
-    const handleFinishGame = () => {
+    const handleFinishGameConfirm = () => {
         setIsGameComplete(false)
         dispatch({ type: DispatchActions.finishGame })
         navigate("/", { replace: true })
     }
+
+    const handleFinishGameClick = () => {
+        setConfirmationDialogProps({
+            ...CONFIRMATION_DIALOG_PROPS["confirmEnd"],
+            handleConfirm: handleFinishGameConfirm,
+        })
+        handleCloseMenu()
+        setShowConfirmationDialog(true)
+    }
+
+    const handleMoreOptionsClick = (
+        event: React.MouseEvent<HTMLButtonElement>
+    ) => setAnchorEl(event.currentTarget)
+
+    const handleCloseMenu = () => setAnchorEl(null)
 
     return (
         <>
@@ -267,10 +309,28 @@ const ScoreTable = () => {
                     sx={{ height: "fit-content" }}
                 >
                     <Grid container>
-                        <Grid container>
+                        <Grid container justifyContent="space-between">
                             <Typography variant="h5" color="text.primary">
                                 {data.title || "Game"}
                             </Typography>
+                            <Grid item>
+                                {/* <IconButton title="share">
+                                    <ShareIcon />
+                                </IconButton> */}
+                                <IconButton
+                                    title="view final scores"
+                                    onClick={handleShowFinalScoresClick}
+                                >
+                                    <VisibilityIcon />
+                                </IconButton>
+                                <IconButton
+                                    title="more options"
+                                    onClick={handleMoreOptionsClick}
+                                    sx={{ pr: 0 }}
+                                >
+                                    <MoreVertIcon />
+                                </IconButton>
+                            </Grid>
                         </Grid>
                         <Grid container>
                             <Typography variant="body1" color="text.secondary">
@@ -339,31 +399,6 @@ const ScoreTable = () => {
                             </Grid>
                         ) : null}
                     </Grid>
-                    <Grid
-                        container
-                        item
-                        xs={12}
-                        gap={1}
-                        justifyContent={{ xs: "flex-end" }}
-                    >
-                        <Button
-                            variant="contained"
-                            size="small"
-                            color="error"
-                            onClick={handleResetGameClick}
-                            sx={{ height: "fit-content" }}
-                        >
-                            Reset Game
-                        </Button>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            onClick={handleFinishGameClick}
-                            sx={{ height: "fit-content" }}
-                        >
-                            Finish Game
-                        </Button>
-                    </Grid>
                 </Grid>
 
                 {/* table */}
@@ -371,26 +406,18 @@ const ScoreTable = () => {
                     component={Paper}
                     elevation={2}
                     sx={{
-                        mt: 1.5,
+                        mt: 2.5,
                         height: "fit-content",
                         maxHeight: "60vh",
-                        "&.MuiTableContainer-root .MuiTableRow-root .MuiTableCell-root:first-of-type":
-                            {
-                                width: "3.75rem",
-                            },
+                        // "&.MuiTableContainer-root .MuiTableRow-root .MuiTableCell-root:first-of-type":
+                        //     {
+                        //         width: "3.75rem",
+                        //     },
                     }}
                 >
                     <Table stickyHeader aria-label="scores-table">
                         <TableHead>
                             <TableRow>
-                                <TableCell
-                                    sx={{
-                                        left: 0,
-                                        zIndex: 15,
-                                        backgroundColor: "background.paper",
-                                        filter: "brightness(70%)",
-                                    }}
-                                />
                                 {Object.keys(players).map((item, index) => (
                                     <TableCell
                                         align="center"
@@ -404,37 +431,43 @@ const ScoreTable = () => {
                                         {players[item]}
                                     </TableCell>
                                 ))}
-                                <TableCell
-                                    sx={{
-                                        right: 0,
-                                        zIndex: 15,
-                                        backgroundColor: "background.paper",
-                                        filter: "brightness(70%)",
-                                    }}
-                                />
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {scores.map((row, index) => (
-                                <TableRow
+                                <TableRowWithChipHeader
+                                    columnsCount={Object.keys(players).length}
+                                    header={`# ${index + 1}`}
                                     key={`score-table-rows-items-${index}`}
+                                    onDelete={
+                                        currentRound === index
+                                            ? undefined
+                                            : handleDelete(index)
+                                    }
                                 >
-                                    <StickyTableCell sx={{ left: 0 }}>
-                                        # {index + 1}
-                                    </StickyTableCell>
                                     {Object.keys(row).map((item, itemIndex) => (
                                         <TableCell
                                             align="center"
                                             key={`score-table-row-${index}-column-items-${itemIndex}`}
+                                            sx={{
+                                                borderBottom: "none",
+                                            }}
                                         >
                                             {currentRound === index ? (
                                                 <TextField
                                                     variant="outlined"
                                                     size="small"
                                                     name={item}
+                                                    inputProps={{
+                                                        ref: scoreInputRefs
+                                                            .current[itemIndex],
+                                                    }}
                                                     value={row[item]}
                                                     type="number"
                                                     onChange={handleChange}
+                                                    onKeyDown={handleInputKeyDown(
+                                                        itemIndex
+                                                    )}
                                                     sx={{
                                                         maxWidth: 100,
                                                         minWidth: 75,
@@ -445,84 +478,42 @@ const ScoreTable = () => {
                                             )}
                                         </TableCell>
                                     ))}
-                                    <StickyTableCell
-                                        align="center"
-                                        sx={{ right: 0 }}
-                                    >
-                                        {currentRound === index ? (
-                                            <IconButton
-                                                color="success"
-                                                title="Save Round"
-                                                onClick={handleSave}
-                                            >
-                                                <CheckCircleIcon />
-                                            </IconButton>
-                                        ) : (
-                                            <IconButton
-                                                color="error"
-                                                title="Delete Round"
-                                                onClick={handleDelete(index)}
-                                            >
-                                                <CancelIcon />
-                                            </IconButton>
-                                        )}
-                                    </StickyTableCell>
-                                </TableRow>
+                                </TableRowWithChipHeader>
                             ))}
                         </TableBody>
                         <TableFooter
                             sx={{
-                                [`&.MuiTableFooter-root .MuiTableRow-root:${
-                                    showFooterCollapse ? "last" : "first"
-                                }-of-type .MuiTableCell-root`]: {
-                                    borderBottom: "none",
-                                },
+                                [`&.MuiTableFooter-root .MuiTableRow-root .MuiTableCell-root`]:
+                                    {
+                                        borderBottom: "none",
+                                    },
                             }}
                         >
                             {/* score total row */}
-                            <TableRow>
-                                <StickyTableCell sx={{ left: 0 }}>
-                                    Total
-                                </StickyTableCell>
+                            <TableRowWithChipHeader
+                                columnsCount={Object.keys(players).length}
+                                header="Total"
+                            >
                                 {Object.keys(players).map((item, index) => (
                                     <TableCell
                                         align="center"
                                         key={`players-total-scores-items-${index}`}
+                                        sx={{
+                                            fontSize: "0.875rem",
+                                            fontWeight: 750,
+                                        }}
                                     >
                                         {totalScores[item]}
                                     </TableCell>
                                 ))}
-                                <StickyTableCell
-                                    align="center"
-                                    sx={{ right: 0 }}
-                                >
-                                    {Number(data.maxScore) > 0 ? (
-                                        <IconButton
-                                            aria-label="expand-footer"
-                                            size="small"
-                                            onClick={() =>
-                                                setShowFooterCollapse(
-                                                    (prev) => !prev
-                                                )
-                                            }
-                                        >
-                                            <ExpandMoreIcon
-                                                sx={{
-                                                    transform:
-                                                        showFooterCollapse
-                                                            ? "rotate(180deg)"
-                                                            : "rotate(0deg)",
-                                                }}
-                                            />
-                                        </IconButton>
-                                    ) : null}
-                                </StickyTableCell>
-                            </TableRow>
+                            </TableRowWithChipHeader>
 
                             {/* score remaining total row */}
                             {showFooterCollapse ? (
-                                <TableRow>
-                                    <StickyTableCell sx={{ left: 0 }} />
+                                <TableRowWithChipHeader
+                                    columnsCount={Object.keys(players).length}
+                                    header="Score to Win"
+                                >
                                     {Object.keys(players).map((item, index) => (
                                         <TableCell
                                             align="center"
@@ -532,8 +523,7 @@ const ScoreTable = () => {
                                                 totalScores[item]}
                                         </TableCell>
                                     ))}
-                                    <StickyTableCell sx={{ right: 0 }} />
-                                </TableRow>
+                                </TableRowWithChipHeader>
                             ) : null}
                         </TableFooter>
                     </Table>
@@ -546,7 +536,6 @@ const ScoreTable = () => {
                 players={players}
                 totalScores={totalScores}
                 handleClose={handleResultsModalClose}
-                handleFinishGame={handleFinishGame}
             />
 
             {/* confirmation dialog */}
@@ -565,6 +554,20 @@ const ScoreTable = () => {
                     },
                 ]}
             />
+
+            {/* more options menu */}
+            <Menu
+                id="more-options-menu"
+                anchorEl={anchorEl}
+                open={showMenu}
+                onClose={handleCloseMenu}
+                MenuListProps={{
+                    "aria-labelledby": "more-options-menu-buttons",
+                }}
+            >
+                <MenuItem onClick={handleResetGameClick}>Reset</MenuItem>
+                <MenuItem onClick={handleFinishGameClick}>End</MenuItem>
+            </Menu>
         </>
     )
 }

@@ -1,40 +1,53 @@
-import React from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
+import React from "react"
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Typography,
+} from "@mui/material"
 
 type ConfirmationDialogProps = {
-    open: boolean,
-    title: string,
-    actions: { label: string, handleClick: () => void, }[]
+    open: boolean
+    title: string
+    actions: { label: string; handleClick: () => void }[]
     content?: string
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ open, title, actions, content }) => {
+const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+    open,
+    title,
+    actions,
+    content,
+}) => {
     return (
         <Dialog
             open={open}
             keepMounted
             maxWidth="xs"
-            aria-describedby='confirmation-dialog-desc'
+            aria-describedby="confirmation-dialog-desc"
             disableEscapeKeyDown
             fullWidth
         >
-            <DialogTitle variant='h5'>{title}</DialogTitle>
-            {content &&
+            <DialogTitle variant="h5">{title}</DialogTitle>
+            {content && (
                 <DialogContent>
-                    <Typography variant='subtitle2'>Note: {content}</Typography>
+                    <Typography variant="subtitle2">{content}</Typography>
                 </DialogContent>
-            }
+            )}
             <DialogActions>
-                {actions.map((item, index) =>
+                {actions.map((item, index) => (
                     <Button
                         key={`confirmation-dialog-actions-${index}`}
-                        size='small'
-                        variant='contained'
-                        color='primary'
-                        onClick={item.handleClick}>
+                        size="small"
+                        variant="contained"
+                        color="primary"
+                        onClick={item.handleClick}
+                    >
                         {item.label}
                     </Button>
-                )}
+                ))}
             </DialogActions>
         </Dialog>
     )
