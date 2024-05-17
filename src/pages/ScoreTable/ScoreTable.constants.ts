@@ -15,4 +15,9 @@ export const CONFIRMATION_DIALOG_PROPS = {
         content:
             "If you confirm, the scores for this round will be deleted. Are you sure you want to delete this round?",
     },
+    confirmEnd: {
+        title: "Confirm End Game",
+        content:
+            "If you confirm, the scores will reset and the game will end. Are you sure you want to continue?",
+    },
 }

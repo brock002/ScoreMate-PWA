@@ -10,6 +10,8 @@ import {
     Grid,
     IconButton,
     Link,
+    List,
+    ListItem,
     Typography,
 } from "@mui/material"
 import Brightness4Icon from "@mui/icons-material/Brightness4"
@@ -98,7 +100,7 @@ const BaseLayout = () => {
                     justifyContent="center"
                     direction="column"
                     rowGap={1.5}
-                    mt={8}
+                    mt={6}
                 >
                     <Divider sx={{ color: "text.primary" }} />
 
@@ -210,6 +212,51 @@ const BaseLayout = () => {
                                     games and a desire to enhance the gaming
                                     experience for fellow enthusiasts.
                                 </Typography>
+
+                                <Grid item>
+                                    <Divider
+                                        sx={{ color: "text.primary", mt: 5 }}
+                                    >
+                                        Credits
+                                    </Divider>
+
+                                    <List
+                                        sx={{
+                                            "&.MuiList-root .MuiListItem-root":
+                                                {
+                                                    py: "0.125rem",
+                                                },
+                                        }}
+                                    >
+                                        <ListItem>
+                                            <Link
+                                                href="https://www.flaticon.com/free-icons/champion"
+                                                title="champion icons"
+                                            >
+                                                Champion icons created by
+                                                Freepik - Flaticon
+                                            </Link>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Link
+                                                href="https://www.flaticon.com/free-icons/silver-cup"
+                                                title="silver cup icons"
+                                            >
+                                                Silver cup icons created by
+                                                Freepik - Flaticon
+                                            </Link>
+                                        </ListItem>
+                                        <ListItem>
+                                            <Link
+                                                href="https://www.flaticon.com/free-icons/trophy"
+                                                title="trophy icons"
+                                            >
+                                                Trophy icons created by Freepik
+                                                - Flaticon
+                                            </Link>
+                                        </ListItem>
+                                    </List>
+                                </Grid>
                             </Grid>
                         </AccordionDetails>
                     </Accordion>
