@@ -86,10 +86,6 @@ const GameForm: React.FC = () => {
         }
     }
 
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        // e.target.select()
-    }
-
     const handleClearClick =
         (fieldName: ClearableFieldName = "") =>
         () => {
@@ -212,7 +208,6 @@ const GameForm: React.FC = () => {
                         label={`#${index + 1} Player Name`}
                         placeholder="Player Name"
                         onChange={handlePlayerUpdate(index)}
-                        onFocus={handleFocus}
                         helperText={!item ? "player name cannot be empty" : ""}
                         InputLabelProps={{ shrink: true }}
                         error={!item}
@@ -242,7 +237,6 @@ const GameForm: React.FC = () => {
                     name="title"
                     value={data.title}
                     onChange={handleChange}
-                    onFocus={handleFocus}
                     size="small"
                     fullWidth
                     InputProps={
@@ -267,7 +261,6 @@ const GameForm: React.FC = () => {
                     value={data.maxScore}
                     type="number"
                     onChange={handleChange}
-                    onFocus={handleFocus}
                     size="small"
                     fullWidth
                     InputProps={
@@ -292,7 +285,6 @@ const GameForm: React.FC = () => {
                     value={data.maxScorePerRound}
                     type="number"
                     onChange={handleChange}
-                    onFocus={handleFocus}
                     size="small"
                     fullWidth
                     InputProps={
@@ -316,7 +308,6 @@ const GameForm: React.FC = () => {
                     helperText="maximum no of rounds the game will go on for..."
                     value={data.maxRounds}
                     onChange={handleChange}
-                    onFocus={handleFocus}
                     type="number"
                     size="small"
                     fullWidth
