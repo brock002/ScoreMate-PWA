@@ -2,15 +2,11 @@ import { Grid, GridProps, Typography, useMediaQuery } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import LogoIcon from "@/assets/logo-icon.png"
 
-type Logo = {
-    gridProps?: GridProps
-}
-
-const Logo: React.FC<Logo> = ({ gridProps }) => {
+const Logo: React.FC<GridProps> = (props) => {
     const theme = useTheme()
     const isUpSM = useMediaQuery(theme.breakpoints.up("sm"))
     return (
-        <Grid container alignItems="center" {...gridProps}>
+        <Grid container alignItems="center" {...props}>
             <img
                 src={LogoIcon}
                 alt="LOGO"
@@ -26,10 +22,6 @@ const Logo: React.FC<Logo> = ({ gridProps }) => {
             </Typography>
         </Grid>
     )
-}
-
-Logo.defaultProps = {
-    gridProps: {},
 }
 
 export default Logo
