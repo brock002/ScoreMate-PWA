@@ -18,7 +18,9 @@ import { useFormData } from "@/contexts"
 import { useSnackbar } from "notistack"
 
 // get end adornment with close icon
-const getCloseIconAdornment = (handleClick = () => {}) => ({
+const getCloseIconAdornment = (
+    handleClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+) => ({
     endAdornment: (
         <InputAdornment position="start">
             <IconButton size="small" onClick={handleClick}>
@@ -115,11 +117,17 @@ const GameForm: React.FC = () => {
             )
         }
 
-    const handlePlayerClearClick = (changeIndex: number) => () => {
-        setPlayers((prev) =>
-            prev.map((item, index) => (index === changeIndex ? "" : item))
-        )
-    }
+    const handlePlayerClearClick =
+        (changeIndex: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
+            const possibleAdjacentInput =
+                e.currentTarget.parentElement?.previousElementSibling
+            if (possibleAdjacentInput?.nodeName === "INPUT")
+                (possibleAdjacentInput as HTMLElement).focus()
+
+            setPlayers((prev) =>
+                prev.map((item, index) => (index === changeIndex ? "" : item))
+            )
+        }
 
     const handleSubmit = (): void => {
         if (players.some((item) => !item)) {
