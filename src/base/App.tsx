@@ -41,7 +41,12 @@ function App() {
     )
 
     return (
-        <SnackbarProvider maxSnack={3} autoHideDuration={3000} preventDuplicate>
+        <SnackbarProvider
+            maxSnack={3}
+            autoHideDuration={3000}
+            anchorOrigin={{ horizontal: "center", vertical: "top" }}
+            preventDuplicate
+        >
             <ThemeProvider theme={theme}>
                 <AppContextProvider>
                     <RouterProvider router={router} />
