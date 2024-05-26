@@ -3,13 +3,13 @@ import { ColorModeContextType } from "./colorModeContext.types"
 
 // creating context
 const ColorModeContext = createContext<ColorModeContextType>({
-    colorMode: "light",
+    colorMode: "dark",
     toggleColorMode: () => {},
 })
 
 // creating context wrapper
 const wrapWithColorModeContext = (Component: React.FC) => (props: any) => {
-    const [mode, setMode] = useState<"light" | "dark">("light")
+    const [mode, setMode] = useState<"light" | "dark">("dark")
 
     useEffect(() => {
         // getting mode from local storage if available

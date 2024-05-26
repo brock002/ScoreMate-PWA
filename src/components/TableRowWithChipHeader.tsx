@@ -67,7 +67,7 @@ const TableRowWithChipHeader: React.FC<TableRowWithChipHeader> = (props) => {
                     </Divider>
                 </TableCell>
             </TableRow>
-            <TableRow {...rest}>{children}</TableRow>
+            {children && <TableRow {...rest}>{children}</TableRow>}
         </React.Fragment>
     )
 }

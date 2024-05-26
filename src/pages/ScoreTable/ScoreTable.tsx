@@ -15,9 +15,13 @@ import {
     IconButton,
     Menu,
     MenuItem,
+    ListItemIcon,
+    Divider,
 } from "@mui/material"
 import { styled } from "@mui/material/styles"
 // import ShareIcon from "@mui/icons-material/Share"
+import CloseIcon from "@mui/icons-material/Close"
+import ReplayIcon from "@mui/icons-material/Replay"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import { AppContextDispatchActions as DispatchActions } from "@/utils/types"
@@ -136,7 +140,7 @@ const ScoreTable = () => {
 
     useEffect(() => {
         // focus on first column input
-        scoreInputRefs.current[0].current?.focus()
+        scoreInputRefs.current?.[0]?.current?.focus()
 
         // check if max rounds are completed or check if max score is achieved
         if (
@@ -187,7 +191,10 @@ const ScoreTable = () => {
         ) {
             enqueueSnackbar(
                 `Current round total is not equal to ${data.maxScorePerRound}`,
-                { variant: "error" }
+                {
+                    variant: "error",
+                    anchorOrigin: { vertical: "top", horizontal: "center" },
+                }
             )
             return
         }
@@ -460,7 +467,9 @@ const ScoreTable = () => {
                                                     name={item}
                                                     inputProps={{
                                                         ref: scoreInputRefs
-                                                            .current[itemIndex],
+                                                            .current?.[
+                                                            itemIndex
+                                                        ],
                                                     }}
                                                     value={row[item]}
                                                     type="number"
@@ -565,8 +574,19 @@ const ScoreTable = () => {
                     "aria-labelledby": "more-options-menu-buttons",
                 }}
             >
-                <MenuItem onClick={handleResetGameClick}>Reset</MenuItem>
-                <MenuItem onClick={handleFinishGameClick}>End</MenuItem>
+                <MenuItem onClick={handleResetGameClick}>
+                    <ListItemIcon>
+                        <ReplayIcon />
+                    </ListItemIcon>
+                    Reset Game
+                </MenuItem>
+                <Divider sx={{ color: "text.primary" }} />
+                <MenuItem onClick={handleFinishGameClick}>
+                    <ListItemIcon>
+                        <CloseIcon />
+                    </ListItemIcon>
+                    End Game
+                </MenuItem>
             </Menu>
         </>
     )

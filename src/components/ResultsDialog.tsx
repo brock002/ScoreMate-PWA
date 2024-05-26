@@ -143,7 +143,7 @@ const ResultsDialog: React.FC<ResultsDialogProps> = ({
 
                     {/* current standing names */}
                     <Grid container justifyContent="space-between">
-                        {totalScoresInOrder.slice(0, 3).map((item, index) => (
+                        {[2, 0, 1].map((item, index) => (
                             <Grid
                                 item
                                 xs={4}
@@ -156,7 +156,7 @@ const ResultsDialog: React.FC<ResultsDialogProps> = ({
                                     align="center"
                                     sx={{ fontWeight: "bold" }}
                                 >
-                                    {item[0]}
+                                    {totalScoresInOrder[item][0]}
                                 </Typography>
                             </Grid>
                         ))}

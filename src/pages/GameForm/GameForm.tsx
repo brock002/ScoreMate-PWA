@@ -34,8 +34,13 @@ const GameForm: React.FC = () => {
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar()
     const { data, currentGameData, dispatch } = useFormData()
-    const [playersCount, setPlayersCount] = useState<number>(2)
-    const [players, setPlayers] = useState<string[]>(["Player 1", "Player 2"])
+    const [playersCount, setPlayersCount] = useState<number>(4)
+    const [players, setPlayers] = useState<string[]>([
+        "Player 1",
+        "Player 2",
+        "Player 3",
+        "Player 4",
+    ])
 
     useEffect(() => {
         if (currentGameData?.isGameRunning)
@@ -90,7 +95,12 @@ const GameForm: React.FC = () => {
 
     const handleClearClick =
         (fieldName: ClearableFieldName = "") =>
-        () => {
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            const possibleAdjacentInput =
+                e.currentTarget.parentElement?.previousElementSibling
+            if (possibleAdjacentInput?.nodeName === "INPUT")
+                (possibleAdjacentInput as HTMLElement).focus()
+
             if (!!fieldName)
                 dispatch({
                     type: DispatchActions.updateValue,
@@ -356,7 +366,7 @@ const GameForm: React.FC = () => {
             <Grid container>
                 <Button
                     variant="contained"
-                    size="small"
+                    size="medium"
                     onClick={handleSubmit}
                     fullWidth
                 >
