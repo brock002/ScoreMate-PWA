@@ -191,10 +191,7 @@ const ScoreTable = () => {
         ) {
             enqueueSnackbar(
                 `Current round total is not equal to ${data.maxScorePerRound}`,
-                {
-                    variant: "error",
-                    anchorOrigin: { vertical: "top", horizontal: "center" },
-                }
+                { variant: "error" }
             )
             return
         }
