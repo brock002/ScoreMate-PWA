@@ -18,7 +18,9 @@ import { useFormData } from "@/contexts"
 import { useSnackbar } from "notistack"
 
 // get end adornment with close icon
-const getCloseIconAdornment = (handleClick = () => {}) => ({
+const getCloseIconAdornment = (
+    handleClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+) => ({
     endAdornment: (
         <InputAdornment position="start">
             <IconButton size="small" onClick={handleClick}>
@@ -32,8 +34,13 @@ const GameForm: React.FC = () => {
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar()
     const { data, currentGameData, dispatch } = useFormData()
-    const [playersCount, setPlayersCount] = useState<number>(2)
-    const [players, setPlayers] = useState<string[]>(["Player 1", "Player 2"])
+    const [playersCount, setPlayersCount] = useState<number>(4)
+    const [players, setPlayers] = useState<string[]>([
+        "Player 1",
+        "Player 2",
+        "Player 3",
+        "Player 4",
+    ])
 
     useEffect(() => {
         if (currentGameData?.isGameRunning)
@@ -88,7 +95,12 @@ const GameForm: React.FC = () => {
 
     const handleClearClick =
         (fieldName: ClearableFieldName = "") =>
-        () => {
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            const possibleAdjacentInput =
+                e.currentTarget.parentElement?.previousElementSibling
+            if (possibleAdjacentInput?.nodeName === "INPUT")
+                (possibleAdjacentInput as HTMLElement).focus()
+
             if (!!fieldName)
                 dispatch({
                     type: DispatchActions.updateValue,
@@ -115,11 +127,17 @@ const GameForm: React.FC = () => {
             )
         }
 
-    const handlePlayerClearClick = (changeIndex: number) => () => {
-        setPlayers((prev) =>
-            prev.map((item, index) => (index === changeIndex ? "" : item))
-        )
-    }
+    const handlePlayerClearClick =
+        (changeIndex: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
+            const possibleAdjacentInput =
+                e.currentTarget.parentElement?.previousElementSibling
+            if (possibleAdjacentInput?.nodeName === "INPUT")
+                (possibleAdjacentInput as HTMLElement).focus()
+
+            setPlayers((prev) =>
+                prev.map((item, index) => (index === changeIndex ? "" : item))
+            )
+        }
 
     const handleSubmit = (): void => {
         if (players.some((item) => !item)) {
@@ -348,7 +366,7 @@ const GameForm: React.FC = () => {
             <Grid container>
                 <Button
                     variant="contained"
-                    size="small"
+                    size="medium"
                     onClick={handleSubmit}
                     fullWidth
                 >
