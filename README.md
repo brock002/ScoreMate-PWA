@@ -19,3 +19,20 @@ Score Mate is a comprehensive app designed for enthusiasts of card games who wan
 Whether you're hosting a casual game night with friends or competing in a high-stakes tournament, Score Mate is your ultimate companion for keeping score accurately and efficiently. Download the app today and elevate your card gaming experience to new heights!
 
 ---
+
+#### Work In-Progress
+
+-   add firebase BE (branch: `feature/adding-firebase-be`):
+
+    -   save current score in backend
+    -   remove localStorage usage
+    -   add history to check old games
+    -   add player name saving functionality
+    -   add analytics
+
+-   add share
+-   add final scores modal before ending a game
+-   add animation for adding row
+-   add animation for total after adding row
+
+---

@@ -11,6 +11,8 @@ import {
     CurrentGame,
     AppContextDispatchActions as DispatchActions,
 } from "@/utils/types"
+import { doc, query, collection, where, getDocs } from "firebase/firestore"
+import { F_DB, GAME_DB, USER_DB } from "@/utils/constants"
 
 // players: ["JD", "SM", "SA", "BD"],
 const INITIAL_FORM_VALUES = {
@@ -43,8 +45,26 @@ const AppContextProvider: React.FC<{
     const [currentGame, setCurrentGame] = useState<CurrentGame>(INITIAL_GAME)
     // console.log('data', formValues, currentGame)
 
+    // TODO: test the following code
     useEffect(() => {
+        // testing FB
+        ;(async () => {
+            const currentUser = doc(USER_DB, "IE8VBxffjPCWp25Oyfuc")
+            const games = await getDocs(
+                query(GAME_DB, where("user", "==", currentUser))
+            )
+            games.forEach((data) =>
+                console.log(
+                    `games ${data.id}`,
+                    data.data(),
+                    " for user ",
+                    currentUser.id
+                )
+            )
+        })()
+
         const data = JSON.parse(localStorage.getItem("currentGame") || "{}")
+
         // console.log('data from ls', data);
         if (!!data.formValues) setFormValues(data.formValues)
         if (!!data.currentGame) setCurrentGame(data.currentGame)
